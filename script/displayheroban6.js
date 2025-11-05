@@ -100,6 +100,9 @@ const phaseElement = document.getElementById('phase');
 const arrowElement = document.getElementById('arrow');
 const timerElement = document.getElementById('timer');
 const timerBar = document.getElementById('timer-bar');
+const timerArrow = document.getElementById('timer-arrow');
+const timerNumber = document.getElementById('timer-number');
+const timerPhase = document.getElementById('timer-phase');
 
 function updateUI() {
     let currentPhaseIndex = parseInt(localStorage.getItem("currentPhaseIndex")) || 0;
@@ -108,7 +111,13 @@ function updateUI() {
     let newUpdateTime = parseInt(localStorage.getItem("updateTime")) || 0;
 
     // Update teks timer langsung dari nilai lokal agar terlihat mulus
-    timerElement.textContent = localTimerValue > 0 ? localTimerValue : timerFromStorage;
+    let displayTimer = localTimerValue > 0 ? localTimerValue : timerFromStorage;
+    if (timerElement) {
+        timerElement.textContent = displayTimer;
+    }
+    if (timerNumber) {
+        timerNumber.textContent = displayTimer;
+    }
 
     if (newUpdateTime !== lastUpdateTime) {
         lastUpdateTime = newUpdateTime;
@@ -118,11 +127,28 @@ function updateUI() {
 
         if (currentPhaseIndex < phases.length) {
             const currentPhase = phases[currentPhaseIndex];
-            phaseElement.textContent = currentPhase.type;
-            arrowElement.src = currentPhase.direction;
+            if (phaseElement) {
+                phaseElement.textContent = currentPhase.type;
+            }
+            if (arrowElement) {
+                arrowElement.src = currentPhase.direction;
+            }
+            
+            // Update new timer design
+            updateTimerDisplay(currentPhaseIndex, currentPhase);
         } else {
-            phaseElement.textContent = "All Phases Completed";
-            arrowElement.src = "";
+            if (phaseElement) {
+                phaseElement.textContent = "All Phases Completed";
+            }
+            if (arrowElement) {
+                arrowElement.src = "";
+            }
+            if (timerPhase) {
+                timerPhase.textContent = "";
+            }
+            if (timerArrow) {
+                timerArrow.className = "timer-arrow";
+            }
         }
 
         if (timerRunning) {
@@ -143,18 +169,91 @@ function startLocalCountdown(startTime, isRunning) {
     clearInterval(timerCountdownInterval);
     
     localTimerValue = startTime;
-    timerElement.textContent = localTimerValue;
+    if (timerElement) {
+        timerElement.textContent = localTimerValue;
+    }
+    if (timerNumber) {
+        timerNumber.textContent = localTimerValue;
+    }
 
     if (isRunning) {
         timerCountdownInterval = setInterval(() => {
             if (localTimerValue > 0) {
                 localTimerValue--;
-                timerElement.textContent = localTimerValue;
+                if (timerElement) {
+                    timerElement.textContent = localTimerValue;
+                }
+                if (timerNumber) {
+                    timerNumber.textContent = localTimerValue;
+                }
             } else {
                 clearInterval(timerCountdownInterval);
             }
         }, 1000);
     }
+}
+
+// Function to update timer display with arrow and phase
+function updateTimerDisplay(phaseIndex, currentPhase) {
+    if (!timerArrow || !timerPhase || !timerNumber) return;
+    
+    // Determine if it's left (blue) or right (red) side
+    const isLeftSide = currentPhase.direction.includes('Left');
+    const isRightSide = currentPhase.direction.includes('Right');
+    
+    // Determine phase type (BANNING or PICKING)
+    const isBanning = currentPhase.direction.includes('Banning');
+    const isPicking = currentPhase.direction.includes('Picking');
+    const isAdjustment = currentPhase.direction.includes('Adjustment');
+    
+    // Update arrow position and color
+    if (isLeftSide) {
+        // Blue side active - blue arrow on left pointing left
+        timerArrow.className = 'timer-arrow left';
+        timerArrow.style.display = 'block';
+        // Update timer bar color to blue
+        if (timerBar) {
+            timerBar.classList.remove('red-side');
+            timerBar.classList.add('blue-side');
+        }
+    } else if (isRightSide) {
+        // Red side active - red/orange arrow on right pointing right
+        timerArrow.className = 'timer-arrow right';
+        timerArrow.style.display = 'block';
+        // Update timer bar color to red
+        if (timerBar) {
+            timerBar.classList.remove('blue-side');
+            timerBar.classList.add('red-side');
+        }
+    } else {
+        // Adjustment or other - hide arrow
+        timerArrow.className = 'timer-arrow';
+        timerArrow.style.display = 'none';
+        // Default to red for adjustment phase
+        if (timerBar) {
+            timerBar.classList.remove('blue-side');
+            timerBar.classList.add('red-side');
+        }
+    }
+    
+    // Update phase text
+    if (isBanning) {
+        timerPhase.textContent = 'BANNING';
+    } else if (isPicking) {
+        timerPhase.textContent = 'PICKING';
+    } else if (isAdjustment) {
+        timerPhase.textContent = 'ADJUSTMENT';
+    } else {
+        timerPhase.textContent = '';
+    }
+    
+    // Trigger animations
+    timerNumber.classList.remove('updated');
+    timerPhase.classList.remove('updated');
+    setTimeout(() => {
+        timerNumber.classList.add('updated');
+        timerPhase.classList.add('updated');
+    }, 10);
 }
 
 
@@ -203,11 +302,19 @@ function initialize() {
     updateActiveBoxes();
     
     // Panggil updateUI sekali lagi untuk memastikan state visual lainnya benar
+    updateUI();
+    
+    // Initialize timer display on load
     let currentPhaseIndex = parseInt(localStorage.getItem("currentPhaseIndex")) || 0;
-    if (currentPhaseIndex < phases.length) {
+    if (currentPhaseIndex < phases.length && phases[currentPhaseIndex]) {
         const currentPhase = phases[currentPhaseIndex];
-        phaseElement.textContent = currentPhase.type;
-        arrowElement.src = currentPhase.direction;
+        if (phaseElement) {
+            phaseElement.textContent = currentPhase.type;
+        }
+        if (arrowElement) {
+            arrowElement.src = currentPhase.direction;
+        }
+        updateTimerDisplay(currentPhaseIndex, currentPhase);
     }
     if (timerRunning) {
         const phaseDuration = parseInt(localStorage.getItem("phaseDuration")) || 60;

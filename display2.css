@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
 @font-face {
     font-family: 'myfonts';
     src: url('Assets/Font/Renegade\ Pursuit.otf') format('truetype');
@@ -199,7 +201,6 @@
 .lowermid{
     width: 470px;
     height: 274.5px;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -314,7 +315,7 @@
 .lowerlowermid{
     width: 470px;
     height: 95.5px;
-
+    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -336,34 +337,180 @@
     left: 50%;
     transform: translateX(-50%) scaleX(1);
     transition: none;
-    transition: 0.3s; 
+    transition: transform 0.3s, background-color 0.3s ease-in-out;
 }
 
-.arrow{
+#timer-bar.blue-side {
+    background-color: var(--boredercolor2);
+}
+
+#timer-bar.red-side {
+    background-color: var(--boredercolor);
+}
+
+.timer-container{
+    position: relative;
     width: 470px;
     height: 84px;
-
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 10px;
+    z-index: 10;
+    gap: 0;
 }
 
-.arrow img{
-    scale: 0.23;
+.timer-container::before,
+.timer-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    z-index: 11;
 }
 
-.countdown{
-    width: 70px;
-    height: 30px;
-    background-color: var(--boredercolor);
-    margin-top: -114px;
-    font-size: 20px;
-    z-index: 1;
+.timer-arrow{
+    width: 0;
+    height: 0;
+    position: absolute;
+    transition: all 0.5s ease-in-out;
+    z-index: 11;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    animation-delay: 0.5s;
+}
+
+.timer-arrow.left,
+.timer-arrow.right{
+    display: block;
+}
+
+.timer-arrow.left{
+    left: calc(50% - 80px);
+    border-top: 25px solid transparent;
+    border-bottom: 25px solid transparent;
+    border-right: 30px solid var(--boredercolor2);
+    border-left: none;
+    animation: slideInLeft 0.5s ease-out forwards, arrowPulseHorizontalLeft 1.5s ease-in-out 0.5s infinite;
+}
+
+.timer-arrow.right{
+    right: calc(50% - 80px);
+    border-top: 25px solid transparent;
+    border-bottom: 25px solid transparent;
+    border-left: 30px solid var(--boredercolor);
+    border-right: none;
+    animation: slideInRight 0.5s ease-out forwards, arrowPulseHorizontalRight 1.5s ease-in-out 0.5s infinite;
+}
+
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateY(-50%) translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateY(-50%) translateX(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+@keyframes arrowPulseHorizontalLeft {
+    0%, 100% {
+        transform: translateY(-50%) translateX(0);
+    }
+    50% {
+        transform: translateY(-50%) translateX(-8px);
+    }
+}
+
+@keyframes arrowPulseHorizontalRight {
+    0%, 100% {
+        transform: translateY(-50%) translateX(0);
+    }
+    50% {
+        transform: translateY(-50%) translateX(8px);
+    }
+}
+
+.timer-content{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    color: #fff;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    min-width: 60px;
+}
+
+.timer-number{
+    font-size: 45px;
+    font-weight: 400;
+    font-family: 'Anton', sans-serif;
+    color: #2D2D2D;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.timer-number.updated{
+    animation: numberPulse 1s ease-in-out;
+}
+
+.timer-phase{
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Anton', sans-serif;
+    color: #2D2D2D;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 3px;
+    transition: all 0.3s ease;
+}
+
+.timer-phase.updated{
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes numberPulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 /*phasing*/
 
