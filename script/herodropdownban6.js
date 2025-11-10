@@ -15,8 +15,9 @@
             { dropdown: ['dropdowns-6', 'dropdowns-7'], phase: 5, display: ['pick-right-1', 'pick-right-2'] },
             { dropdown: ['dropdowns-2', 'dropdowns-3'], phase: 6, display: ['pick-left-2', 'pick-left-3'] },
             { dropdown: 'dropdowns-8', phase: 7, display: ['pick-right-3'] },
-            { dropdown: 'dropdowns-18', phase: 9, display: ['ban-right-3'] },
-            { dropdown: 'dropdowns-13', phase: 8, display: ['ban-left-3'] },
+            // Fix phase order for the 3rd ban: Right then Left (phases 8 and 9)
+            { dropdown: 'dropdowns-18', phase: 8, display: ['ban-right-3'] },
+            { dropdown: 'dropdowns-13', phase: 9, display: ['ban-left-3'] },
             { dropdown: 'dropdowns-9', phase: 10, display: ['pick-right-4'] },
             { dropdown: ['dropdowns-4', 'dropdowns-5'], phase: 11, display: ['pick-left-4', 'pick-left-5'] },
             { dropdown: 'dropdowns-10', phase: 12, display: ['pick-right-5'] },
