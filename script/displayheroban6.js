@@ -25,13 +25,8 @@ function getHeroName(imgSrc) {
     return hero ? hero.name : "";
 }
 
-// Check if audio is enabled
+// Check if audio is enabled - always enabled for display2ban6
 function isAudioEnabled() {
-    const audioToggle = document.getElementById("audio-toggle");
-    if (audioToggle) {
-        return audioToggle.checked;
-    }
-    // Default to enabled if toggle doesn't exist
     return true;
 }
 
@@ -64,7 +59,7 @@ function updateDisplay() {
         let imgElement = document.getElementById(`image-display-${i}`);
         let boxElement = document.getElementById(`image-box-${i}`);
         let cloneImgElement = document.getElementById(`clone-image-display-${i}`);
-        let cloneBoxElement = document.getElementById(`clone-image-box-${i}`);
+        let cloneBoxElement = document.getElementById(`-clone-image-box-${i}`);
         let heroNameBox = document.getElementById(`hero-name-box-${i}`);
         
         // Get pick cover element
@@ -82,9 +77,13 @@ function updateDisplay() {
         }
 
         if (imgSrc) {
-            imgElement.src = imgSrc;
-            imgElement.style.opacity = "1";
-            boxElement.classList.add("show");
+            if (imgElement) {
+                imgElement.src = imgSrc;
+                imgElement.style.opacity = "1";
+            }
+            if (boxElement) {
+                boxElement.classList.add("show");
+            }
             
             // If hero is picked, open the cover to reveal hero
             if (pickCover && i <= 10) {
@@ -198,9 +197,13 @@ function updateDisplay() {
                 lastPlayed[i] = heroChanged;
             }
         } else {
-            imgElement.src = "";
-            imgElement.style.opacity = "0";
-            boxElement.classList.remove("show");
+            if (imgElement) {
+                imgElement.src = "";
+                imgElement.style.opacity = "0";
+            }
+            if (boxElement) {
+                boxElement.classList.remove("show");
+            }
             
             // Hide hero name
             if (heroNameBox) {
@@ -378,6 +381,9 @@ function updateUI() {
         
         updateActiveBoxes();
     }
+    
+    // Also update display to ensure hero images are always in sync
+    updateDisplay();
 }
 
 // Fungsi untuk memulai atau menghentikan hitung mundur LOKAL
@@ -673,36 +679,16 @@ setInterval(updateUI, 250);
 // Listener untuk perubahan hero
 window.addEventListener("storage", updateDisplay);
 
-// Initialize audio toggle
+// Initialize audio - always enabled for display2ban6
 document.addEventListener("DOMContentLoaded", function() {
     const audioToggle = document.getElementById("audio-toggle");
     if (audioToggle) {
-        // Load saved audio state from localStorage
-        const savedAudioState = localStorage.getItem("audioEnabled");
-        if (savedAudioState !== null) {
-            audioToggle.checked = savedAudioState === "true";
-        }
+        // Always keep audio enabled
+        audioToggle.checked = true;
+        audioToggle.disabled = true;
         
-        // Unlock audio when toggle is turned on
-        audioToggle.addEventListener("change", function() {
-            localStorage.setItem("audioEnabled", audioToggle.checked);
-            if (audioToggle.checked) {
-                // Unlock audio by playing a silent audio
-                new Audio().play().catch(e => console.log('Audio unlocked'));
-            } else {
-                // Stop any currently playing audio
-                const audio = document.getElementById("hero-voice");
-                if (audio) {
-                    audio.pause();
-                    audio.currentTime = 0;
-                }
-            }
-        });
-        
-        // Unlock audio on initial load if enabled
-        if (audioToggle.checked) {
-            new Audio().play().catch(e => console.log('Audio unlocked'));
-        }
+        // Unlock audio on initial load
+        new Audio().play().catch(e => console.log('Audio unlocked'));
     }
 });
 

@@ -25,13 +25,8 @@ function getHeroName(imgSrc) {
     return hero ? hero.name : "";
 }
 
-// Check if audio is enabled
+// Check if audio is enabled - always enabled for display2
 function isAudioEnabled() {
-    const audioToggle = document.getElementById("audio-toggle");
-    if (audioToggle) {
-        return audioToggle.checked;
-    }
-    // Default to enabled if toggle doesn't exist
     return true;
 }
 
@@ -677,36 +672,16 @@ setInterval(updateUI, 250);
 // Listener untuk perubahan hero
 window.addEventListener("storage", updateDisplay);
 
-// Initialize audio toggle
+// Initialize audio - always enabled for display2
 document.addEventListener("DOMContentLoaded", function() {
     const audioToggle = document.getElementById("audio-toggle");
     if (audioToggle) {
-        // Load saved audio state from localStorage
-        const savedAudioState = localStorage.getItem("audioEnabled");
-        if (savedAudioState !== null) {
-            audioToggle.checked = savedAudioState === "true";
-        }
+        // Always keep audio enabled
+        audioToggle.checked = true;
+        audioToggle.disabled = true;
         
-        // Unlock audio when toggle is turned on
-        audioToggle.addEventListener("change", function() {
-            localStorage.setItem("audioEnabled", audioToggle.checked);
-            if (audioToggle.checked) {
-                // Unlock audio by playing a silent audio
-                new Audio().play().catch(e => console.log('Audio unlocked'));
-            } else {
-                // Stop any currently playing audio
-                const audio = document.getElementById("hero-voice");
-                if (audio) {
-                    audio.pause();
-                    audio.currentTime = 0;
-                }
-            }
-        });
-        
-        // Unlock audio on initial load if enabled
-        if (audioToggle.checked) {
-            new Audio().play().catch(e => console.log('Audio unlocked'));
-        }
+        // Unlock audio on initial load
+        new Audio().play().catch(e => console.log('Audio unlocked'));
     }
 });
 
