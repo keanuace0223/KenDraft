@@ -71,7 +71,8 @@ body {
 .lowermid{
     width: 502px;
     height:835px;
-
+    background-color: white;
+    background-image: none;
 }
 
 .lowerright{

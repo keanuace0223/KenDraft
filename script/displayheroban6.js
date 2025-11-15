@@ -50,6 +50,46 @@ function playVoice(voiceSrc) {
     audio.play().catch(error => console.error('Error playing audio:', error));
 }
 
+// Fungsi untuk memutar draft sound
+function playDraftSound() {
+    // Check if audio is enabled
+    if (!isAudioEnabled()) {
+        return;
+    }
+    
+    // Get or create draft sound audio element
+    let draftAudio = document.getElementById("draft-sound");
+    if (!draftAudio) {
+        draftAudio = document.createElement("audio");
+        draftAudio.id = "draft-sound";
+        draftAudio.preload = "auto";
+        draftAudio.src = "/Assets/Other/DraftSound.mp3";
+        document.body.appendChild(draftAudio);
+    } else {
+        // Ensure src is set (in case element was created but src not set)
+        if (!draftAudio.src || !draftAudio.src.includes("DraftSound.mp3")) {
+            draftAudio.src = "/Assets/Other/DraftSound.mp3";
+        }
+    }
+    
+    let currentPhaseIndex = parseInt(localStorage.getItem("currentPhaseIndex")) || 0;
+    // Set volume to maximum (1.0) for draft sound, unless in final phase
+    if (currentPhaseIndex === phases.length - 1) {
+        draftAudio.volume = 0;
+    } else {
+        // Explicitly set to maximum volume
+        draftAudio.volume = 1.0;
+    }
+    
+    // Ensure volume is set right before playing for maximum loudness
+    draftAudio.currentTime = 0;
+    // Set volume again just before playing to ensure it's applied
+    if (currentPhaseIndex !== phases.length - 1) {
+        draftAudio.volume = 1.0;
+    }
+    draftAudio.play().catch(error => console.error('Error playing draft sound:', error));
+}
+
 // Fungsi untuk memperbarui tampilan dropdown dan gambar
 function updateDisplay() {
     for (let i = 1; i <= 20; i++) {
@@ -193,6 +233,12 @@ function updateDisplay() {
                 cloneBoxElement.classList.add("show");
             }
             if (voiceSrc && heroChanged && (!lastPlayed[i] || lastPlayed[i] !== heroChanged)) {
+                // Play draft sound for picks (slots 1-10), then play hero voiceline
+                if (i <= 10) {
+                    // Hero is picked - play draft sound first, then hero voiceline
+                    playDraftSound();
+                }
+                // Play hero voiceline (for both picks and bans)
                 playVoice(voiceSrc);
                 lastPlayed[i] = heroChanged;
             }

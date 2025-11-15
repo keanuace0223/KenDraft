@@ -293,6 +293,10 @@
     border: solid 1px var(--boredercolor);
     box-sizing: border-box;
     position: relative;
+    background-image: url(Assets/Other/lowermid.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .heropick{
@@ -472,6 +476,10 @@
 
 .lowermid {
     position: relative;
+    background-image: url(Assets/Other/lowermid.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .timerbar{
